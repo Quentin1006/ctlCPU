@@ -102,7 +102,8 @@ int main(int argc, char **argv)
 
 	while(true)
 	{
-		if (i > 200)
+		int limit = 50;
+		if (i > limit)
 		{
 			i = 1;
 			for (int j = 0; j < nbPids; tPid[j++].cpuUsage = 0);
@@ -113,13 +114,31 @@ int main(int argc, char **argv)
 		{
 			//printf("pid: %d\n", atoi(tPid[k]));
 			//printf("Usage: %f\n", tPid[k].cpuUsage);
-			if( (tPid[k].cpuUsage/i) >= tPid[k].pct)
+			double cpuPct = tPid[k].cpuUsage/i;
+			if( cpuPct >= tPid[k].pct)
 			{
 				kill(tPid[k].pid,SIGSTOP);
 			}
 			else 
 			{
 				kill(tPid[k].pid,SIGCONT);
+			}
+
+			if( (int)i%(limit/2) == 0 )
+			{
+				FILE* fic = NULL ;
+				char filename[50];
+				sprintf(filename, "5000000ms/cpuVals%d_%d.csv", tPid[k].pid, limit);
+				fic = fopen(filename, "a");
+				if(fic != NULL)
+				{
+					fprintf(fic,"%f\n",cpuPct);
+					fclose(fic);
+				}
+				else 
+				{
+					printf("impossible d'ouvrir le fichier");
+				}
 			}
 		}
 		i++;
