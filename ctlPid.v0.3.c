@@ -5,8 +5,10 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/resource.h>
 
 #define TEMPS_SLEEP  5000000
+#define NICE 		 20
 
 char **eclaterChaine(const char *s, char separateur);
 
@@ -49,6 +51,16 @@ void calcCPU(struct sPidInfo tPid[], int nbPids)
 		tPid[j].cpuUsage += (double)(totalTime)/(double)(differenceTemps);
 	}
 }
+
+void setNice(struct sPidInfo tPid[], nbPids)
+{
+	for(int i=0;i<nbPids;i++)
+	{
+		setPriority(tPid[i].pid,0,NICE);
+	}
+}
+
+
 
 
 
@@ -99,6 +111,8 @@ int main(int argc, char **argv)
 	// long nbPids = sizeof(*tPid)/sizeof(char *);
 	// printf("test\n");
 	// printf("size tPid: %lu, size a *char: %lu\n", sizeof(*tPid), sizeof(char *));
+
+	setNice(tPid, nbPids);
 
 	while(true)
 	{

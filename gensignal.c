@@ -5,6 +5,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <signal.h>
+#include <string.h>
 #include <mach/mach_time.h>
 
 
@@ -46,12 +47,33 @@ int main(int argc, char const *argv[])
 	// 	//printf("fin du sleep\n");
 
 	// }
+	// le temps sera exprimé en micro sec
+	double temps_actif, temps_sleep;
+	if(argc == 5 )
+	{
+		printf("%s\n",argv[2] );
+		if(strcmp(argv[1], "-a") == 0)
+		{
+			temps_actif = atof(argv[2]);
+		}
+		if(strcmp(argv[3], "-s") == 0)
+		{
+			temps_sleep = atof(argv[4]);
+		}
+	}
+	else 
+	{
+		printf("Le nombre d'argument n'est pas correct\n");
+		exit(1);
+	}
+	printf("%f, %f\n",temps_sleep, temps_actif );
+
 	while(1)
 	{
 		clock_t tstart, tend;
 		tstart = tend = clock();
 		//printf("on démarre\n\n");
-		while( (double)(tend - tstart)/CLOCKS_PER_SEC <= 0.0004 ){
+		while( (double)(tend - tstart)/CLOCKS_PER_SEC <= temps_actif/1000000.0 ){
 			//printf("%f\n",(double)(tend - tstart) );
 			//printf("%f\n",diffclock(tstart, tend)/1000);
 			//printf("difftime: %f\n",difftime(end_t, start_t));
@@ -59,7 +81,7 @@ int main(int argc, char const *argv[])
 			//printf("%ld, %ld, %f \n",start_t, end_t, difftime(end_t, start_t)/1000.0 );
 		}
 		//printf("fin de la boucle while\n");
-		usleep(1600);
+		usleep(temps_sleep);
 		//printf("fin du sleep\n");
 
 	}
