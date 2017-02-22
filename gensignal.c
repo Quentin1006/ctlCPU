@@ -113,21 +113,32 @@ int main(int argc, char const *argv[])
 
 
 	struct itimerval timer;
+	struct timespec tsleep ; 
+	// ;tsleep.tv_sec = 0; 
+	// tsleep.tv_nsec = 400000
 	signal(SIGALRM, handler_signal);
 
-	timer.it_interval.tv_sec = 0;
-	timer.it_interval.tv_usec = 100;
+	timer.it_interval.tv_sec = 1;
+	timer.it_interval.tv_usec = 0;
 
 	timer.it_value = timer.it_interval ; 
 
 	setitimer(ITIMER_REAL, &timer, NULL);
+	struct timeval depart, fin ;
 
 	while(1)
 	{
 		
-		if(hasToSleep ){
-			hasToSleep = -1;
-			usleep(timeToSleep);
+		if(hasToSleep){
+			//hasToSleep = 0;
+			//gettimeofday(&depart,NULL) ; 
+			usleep(4000000000);
+			printf("after sleep\n");
+			//gettimeofday(&fin,NULL) ; 
+			//long differenceTemps = (fin.tv_sec - depart.tv_sec) * 1000000 + (fin.tv_usec - depart.tv_usec);
+			//printf("temps du sleep: %lu\n",differenceTemps );
+
+
 		}	
 	}
 	
@@ -142,32 +153,24 @@ void handler_signal(int inutilisee)
 	//struct proc_taskallinfo tiDepart, tiFin;
 	long tDepart,tFin;
 	struct rusage r;
-	long totalUserTime, totalSystemTime;
 
-	switch(nb_of_timer%2)
+	switch(nb_of_timer%5)
 	{
 		case 0: //on a passé les 500ms
+			//hasToSleep = 0;
+			// getrusage(RUSAGE_SELF, &r);
+			// tDepart = 1000000*r.ru_utime.tv_sec +  r.ru_utime.tv_usec + 1000000*r.ru_stime.tv_sec +  r.ru_stime.tv_usec;
 			
-			hasToSleep = -1;
-			//proc_pidinfo(getpid(), PROC_PIDTASKALLINFO, 0, &tiDepart, sizeof(tiDepart));
-			getrusage(RUSAGE_SELF, &r);
-			tDepart = 1000000*r.ru_utime.tv_sec +  r.ru_utime.tv_usec + 1000000*r.ru_stime.tv_sec +  r.ru_stime.tv_usec;
-
-			//fprintf(stderr, "on remet le nb de timer à :%d\n", nb_of_timer);
 			break;
 		case 1 : // On est au bout de 100ms
-			//fprintf(stderr, "nb timer : %d\n", nb_of_timer);
-			hasToSleep = 1 ;
-			// proc_pidinfo(getpid(), PROC_PIDTASKALLINFO, 0, &tiFin, sizeof(tiFin)); 
-			// totalUserTime = (tiFin.ptinfo.pti_total_user  - tiDepart.ptinfo.pti_total_user ); 
-			// totalSystemTime = (tiFin.ptinfo.pti_total_system  - tiDepart.ptinfo.pti_total_system);
-			getrusage(RUSAGE_SELF, &r);
-			tFin = 1000000*r.ru_utime.tv_sec +  r.ru_utime.tv_usec + 1000000*r.ru_stime.tv_sec +  r.ru_stime.tv_usec;;
-			timeToSleep = 400;
-			if(nb_of_timer%100000 == 1)
-			{
-				printf("temps passé sur 100us : %lu\n", tFin-tDepart );
-			}
+			//hasToSleep = 1 ;
+			// getrusage(RUSAGE_SELF, &r);
+			// tFin = 1000000*r.ru_utime.tv_sec +  r.ru_utime.tv_usec + 1000000*r.ru_stime.tv_sec +  r.ru_stime.tv_usec;
+			// timeToSleep = 400;
+			// if(nb_of_timer%10000 == 1)
+			// {
+			// 	printf("temps passé sur 100us : %lu\n", tFin-tDepart );
+			// }
 			break;
 		
 		default : 
